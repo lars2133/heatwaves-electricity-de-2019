@@ -1,0 +1,49 @@
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editors/IDE
+.vscode/
+.idea/
+
+# Python build & caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.eggs/
+*.egg-info/
+build/
+dist/
+.mypy_cache/
+.pytype/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.venv/
+venv/
+.env
+.env.*
+
+# Notebooks (if any)
+.ipynb_checkpoints/
+
+# Logs & scratch
+logs/
+scratch/
+
+# Project-specific: ignore generated data/outputs
+# Preferred new layout
+data/raw/**
+!data/raw/.gitkeep
+output/**
+!output/.gitkeep
+
+# If you keep old names temporarily
+araw_data/**
+!raw_data/.gitkeep
+Outputs/**
+!outputs/.gitkeep

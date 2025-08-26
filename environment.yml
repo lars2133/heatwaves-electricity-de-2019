@@ -1,0 +1,11 @@
+name: econ-heatwaves
+channels: [conda-forge]
+dependencies:
+  - python=3.9.6
+  - numpy=2.0.2
+  - pandas=2.3.0
+  - matplotlib=3.9.4
+  - scipy=1.14.1
+  - pip
+  - pip:
+      - tzdata>=2024.1
