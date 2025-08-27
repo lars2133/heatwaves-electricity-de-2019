@@ -1,3 +1,8 @@
+"""Step 3 — plots:
+Make two PNGs with CI bands.
+Uses a headless Matplotlib backend (Agg).
+"""
+
 from __future__ import annotations
 from pathlib import Path
 import json, numpy as np, pandas as pd
@@ -16,14 +21,23 @@ def project_paths() -> tuple[Path, Path, Path]:
     return root, raw, out
 
 def plot_profiles(stats: pd.DataFrame, title: str, ylab: str, outfile: Path, label: str) -> Path:
+    """Plot mean±95% CI for heatwave vs. normal over hours 0–23 and save to `outfile`."""
     stats = stats.copy(); stats["hour"] = stats["hour"].astype(int)
-    def s(hw, col): 
+    def s(hw, col):
         return stats.loc[stats["heatwave"]==hw, ["hour", col]].set_index("hour")[col].reindex(range(24))
-    x = np.arange(24)
+
+    # --- FIX: use NumPy arrays for plotting/fill_between ---
+    x   = np.arange(24, dtype=float)
+    y0  = s(0, "mean").to_numpy(dtype=float); lo0 = s(0, "lo").to_numpy(dtype=float); hi0 = s(0, "hi").to_numpy(dtype=float)
+    y1  = s(1, "mean").to_numpy(dtype=float); lo1 = s(1, "lo").to_numpy(dtype=float); hi1 = s(1, "hi").to_numpy(dtype=float)
+
     plt.figure(figsize=(8,5))
-    plt.plot(x, s(0,"mean"), label="normal");  plt.plot(x, s(1,"mean"), label="heatwave")
-    plt.fill_between(x, s(0,"lo"), s(0,"hi"), alpha=0.2, label="normal 95% CI")
-    plt.fill_between(x, s(1,"lo"), s(1,"hi"), alpha=0.2, label="heatwave 95% CI")
+    plt.plot(x, y0, label="normal")
+    plt.plot(x, y1, label="heatwave")
+    plt.fill_between(x, lo0, hi0, alpha=0.2, label="normal 95% CI")
+    plt.fill_between(x, lo1, hi1, alpha=0.2, label="heatwave 95% CI")
+    # -------------------------------------------------------
+
     plt.title(f"{title}\n{label}"); plt.xlabel("Hour of day"); plt.ylabel(ylab)
     plt.legend(); plt.grid(True, alpha=0.3); plt.tight_layout()
     out_abs = Path(outfile).resolve(); plt.savefig(str(out_abs), dpi=200); plt.close()

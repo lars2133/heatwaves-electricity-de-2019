@@ -1,3 +1,8 @@
+"""Step 2 — analysis:
+Compute hourly means and 95% CIs by heatwave status.
+Writes: outputs/hourly_means_ci_{load,price}.csv.
+"""
+
 from __future__ import annotations
 from pathlib import Path
 import numpy as np, pandas as pd
@@ -18,10 +23,12 @@ except Exception:  # pragma: no cover
     _scipy_stats = None
 
 def _tcrit(n: pd.Series | np.ndarray) -> np.ndarray:
+    """Two-sided 95% t critical (df=n-1); fallback 1.96 if SciPy missing."""
     n = np.asarray(n, float); df = np.maximum(n - 1.0, 1.0)
     return _scipy_stats.t.ppf(0.975, df) if _scipy_stats is not None else np.full_like(df, 1.96)
 
 def hourly_means_ci(df: pd.DataFrame, col: str) -> pd.DataFrame:
+    """Per-hour mean with 95% CI by heatwave (unit of variation: day)."""
     # average within day-hour cells, then compute hour-by-hour stats by heatwave
     dayhour = (df.groupby(["heatwave","hour","date"], as_index=False)[col]
                  .mean().rename(columns={col: "value"}))

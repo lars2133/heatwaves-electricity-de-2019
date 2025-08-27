@@ -1,3 +1,8 @@
+"""Step 1 — prepare:
+Read raw CSVs, convert UTC→Europe/Berlin, flag heatwaves, merge.
+Writes: outputs/merged.csv, outputs/meta.json.
+"""
+
 from __future__ import annotations
 from pathlib import Path
 import json
@@ -11,7 +16,7 @@ MONTHS = (6, 7, 8, 9)
 TZ = "Europe/Berlin"
 Q = 0.90              # heatwave quantile
 MIN_RUN = 3           # consecutive hot days
-TEMP_CSV = "Temp_pop_hourly_Ger.csv"
+TEMP_CSV = "temp_pop_hourly_Ger.csv"  
 TEMP_TIME = "time"
 TEMP_VAL = "T_pop_C"
 ELEC_CSV = "elec_data_2019_Ger.csv"
@@ -21,6 +26,7 @@ ELEC_PRICE = "DE_LU_price_day_ahead"
 
 # ---- paths (assumes this file is in scripts/) ----
 def project_paths() -> tuple[Path, Path, Path]:
+    """Return (root, raw_dir, out_dir); assumes raw_data/ and outputs/ under repo root."""
     root = Path(__file__).resolve().parents[1]
     raw, out = root / "raw_data", root / "outputs"
     out.mkdir(parents=True, exist_ok=True)
@@ -31,6 +37,9 @@ def to_local_naive_utc(s: pd.Series, tz: str) -> pd.Series:
     return pd.to_datetime(s, utc=True, errors="raise").dt.tz_convert(ZoneInfo(tz)).dt.tz_localize(None)
 
 def flag_heatwaves(daily_max: pd.Series, q: float, min_run: int) -> pd.DataFrame:
+    """Mark heatwave days: daily_max > quantile(q) and in runs ≥ `min_run`.
+    Returns DataFrame ['date','heatwave'] and uses a run-length trick below.
+    """
     if daily_max.empty: raise ValueError("daily_max empty")
     thr = float(daily_max.quantile(q))
     hot = (daily_max > thr).astype(int)

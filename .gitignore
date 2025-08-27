@@ -5,15 +5,14 @@ Thumbs.db
 # Editors/IDE
 .vscode/
 .idea/
+*.code-workspace
 
 # Python build & caches
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
 *.so
-.eggs/
 *.egg-info/
+.eggs/
 build/
 dist/
 .mypy_cache/
@@ -25,25 +24,19 @@ htmlcov/
 # Environments
 .venv/
 venv/
+env/
 .env
 .env.*
 
-# Notebooks (if any)
+# Notebooks
 .ipynb_checkpoints/
 
 # Logs & scratch
 logs/
 scratch/
 
-# Project-specific: ignore generated data/outputs
-# Preferred new layout
-data/raw/**
-!data/raw/.gitkeep
-output/**
-!output/.gitkeep
-
-# If you keep old names temporarily
-araw_data/**
-!raw_data/.gitkeep
-Outputs/**
-!outputs/.gitkeep
+# Outputs: ignore everything by default, keep final artifacts
+outputs/*
+!outputs/*.png
+!outputs/hourly_means_ci_*.csv
+!outputs/meta.json

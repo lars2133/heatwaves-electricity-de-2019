@@ -1,0 +1,12 @@
+{
+  "era_start": "2019-06-01",
+  "era_end": "2019-09-30",
+  "heatwave_days": 8,
+  "total_days": 122,
+  "threshold_temp_c": 28.99462223202806,
+  "quantile": 0.9,
+  "min_run": 3,
+  "year": 2019,
+  "elec_load_col": "DE_load_actual_entsoe_transparency",
+  "elec_price_col": "DE_LU_price_day_ahead"
+}
